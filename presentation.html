@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.3.450">
 
   <meta name="author" content="Joey Hotz">
-  <title>Discriminating Between Statistical Tests</title>
+  <title>Bayesian Functional Optimization</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -319,17 +319,14 @@
       margin-right: 0; 
     }
   </style>
-  
-  <script src="presentation_files/libs/kePrint-0.0.1/kePrint.js"></script>
-  <link href="presentation_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title"><em>Discriminating</em> Between Statistical Tests</h1>
-  <p class="subtitle">Applications of Probabilistic Methods and Models<br>in Discrimination Lawsuits in the United States</p>
+  <h1 class="title">Bayesian Functional Optimization</h1>
+  <p class="subtitle">Subtitle</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -339,374 +336,22 @@ Joey Hotz
 </div>
 </div>
 
+  <p class="date">Last Updated: 09 April 2024</p>
 </section>
 <section id="table-of-contents" class="slide level2">
 <h2>Table of Contents</h2>
-<ol type="1">
-<li><p>Legal Background</p></li>
-<li><p>Example 1: Testing for Discrimination</p></li>
-<li><p>Example 2: Calculating the Remedy</p></li>
-<li><p>Key Takeaways</p></li>
-</ol>
-</section>
-<section>
-<section id="legal-background" class="title-slide slide level1 center" data-visibility="uncounted" data-background-color="#005500">
-<h1><span style="color:#fafafa;">Legal Background</span></h1>
-
-</section>
-<section id="criminal-and-civil-cases" class="slide level2">
-<h2>Criminal and Civil Cases</h2>
-<p>In the U.S. Justice System, there are two forms of legal proceedings; <span class="tertiary">criminal law</span> and <span class="tertiary">civil law</span>.</p>
-<div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Criminal Law</a></li><li><a href="#tabset-1-2">Civil Law</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1">
-<div style="font-size: 80%; width: 550px;">
-<ul>
-<li>The defendant is <span class="tertiary">presumed innocent until proven guilty</span> of a criminal act.</li>
-<li>The burden of proof is on the prosecution to prove that the defendant is guilty <span class="tertiary">beyond a reasonable doubt</span>.</li>
-</ul>
-</div>
-<p><img data-src="images/handcuffs.png" class="absolute" style="bottom: 100px; right: 0px; width: 500px; "></p>
-</div>
-<div id="tabset-1-2">
-<div style="font-size: 80%; width: 550px;">
-<ul>
-<li>The defendant is accused of causing harm and/or damages through their actions.</li>
-<li>The plaintiff must show that the defendant is <em>likely</em> liable for damages based on a “<span class="tertiary">preponderance of the evidence</span>”.</li>
-<li>If the defendant is found liable, the court will determine a <span class="tertiary">legal remedy</span> to compensate for the harm to the plaintiff(s).<br>
-</li>
-</ul>
-</div>
-<p><img data-src="images/balance-of-probabilities.png" class="absolute" style="bottom: 0px; right: 0px; width: 450px; "></p>
-</div>
-</div>
-</div>
-</section>
-<section id="proving-discrimination" class="slide level2">
-<h2>Proving Discrimination</h2>
-<div>
-<ul>
-<li class="fragment">Legally, <span class="tertiary">discrimination</span> occurs when a person is unfairly disadvantaged due to a <span class="tertiary">protected ground</span>, such as:
-<ul>
-<li class="fragment">Age</li>
-<li class="fragment">Sex</li>
-<li class="fragment">Gender identity/presentation</li>
-<li class="fragment">Race</li>
-</ul></li>
-<li class="fragment">Note: Discrimination does <strong>not</strong> have to be intentional. The legal definition considers impact, not intent.</li>
-<li class="fragment">Discrimination lawsuits are primarily handled in civil courts, where the burden of proof is a balance of probabilities.</li>
-</ul>
-</div>
-</section>
-<section id="statistical-interpretation" class="slide level2">
-<h2>Statistical Interpretation</h2>
-<div>
-<ul>
-<li class="fragment">We can consider these discrimination lawsuits under a <span class="secondary">hypothesis testing</span> framework.</li>
-<li class="fragment">The <span class="secondary">null hypothesis</span> (<span class="math inline">\(H_0\)</span>) is that there is no discrimination in the provided scenario.
-<ul>
-<li class="fragment">Rejecting <span class="math inline">\(H_0\)</span> is equivalent to finding the defendant liable.</li>
-<li class="fragment">Failing to reject <span class="math inline">\(H_0\)</span> means that there is not sufficient enough evidence to convince the court of discrimination.</li>
-</ul></li>
-</ul>
-</div>
-</section></section>
-<section>
-<section id="testing-for-discrimination" class="title-slide slide level1 center" data-visibility="uncounted" data-background-color="#005500">
-<h1><span style="color:#fafafa;">Testing for Discrimination</span></h1>
-
-</section>
-<section id="discrimination-in-employee-layoffs" class="slide level2">
-<h2>Discrimination in Employee Layoffs</h2>
-<div>
-<ul>
-<li class="fragment"><em>Council 31 v. Ward</em> (1991) is a legal case from Illinois concerning a mass layoff of over 200 government employees.</li>
-<li class="fragment">40.1% of the fired employees were Black, despite the fact that Black employees comprised only 34.3% of the workforce.</li>
-<li class="fragment">The plaintiffs argued that these layoffs discriminated against Black employees due to their race.</li>
-</ul>
-</div>
-<div class="fragment">
-<div style="font-size: 80%;">
-<div class="cell">
-<div class="cell-output-display">
-<table data-quarto-postprocess="true">
-<caption>Table 1: Employee layoffs by race</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; border-bottom-style: solid;"></th>
-<th data-quarto-table-cell-role="th" style="text-align: right; border-bottom-style: solid;">Total</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; border-bottom-style: solid;">Fired</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; border-bottom-style: solid;">Retained</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; border-bottom-style: solid;">% Fired</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; border-bottom-style: solid;">% Retained</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; border-left: 1px solid; border-right: 1px solid;">Black</td>
-<td style="text-align: right;">1512</td>
-<td style="text-align: right;">130</td>
-<td style="text-align: right; border-right: 1px solid;">1382</td>
-<td style="text-align: right;">8.6%</td>
-<td style="text-align: right; border-right: 1px solid;">91.4%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; border-left: 1px solid; border-right: 1px solid; border-bottom-style: solid;">White</td>
-<td style="text-align: right; border-bottom-style: solid;">2900</td>
-<td style="text-align: right; border-bottom-style: solid;">87</td>
-<td style="text-align: right; border-right: 1px solid; border-bottom-style: solid;">2813</td>
-<td style="text-align: right; border-bottom-style: solid;">3.0%</td>
-<td style="text-align: right; border-right: 1px solid; border-bottom-style: solid;">97.0%</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="applying-relative-risk" class="slide level2">
-<h2>Applying Relative Risk</h2>
-<div class="fragment" data-fragment-index="1">
-<div class="fragment fade-out" data-fragment-index="2">
-<ul>
-<li>The standard in many discrimination cases is to examine the <span class="secondary">relative risk</span> between the groups.</li>
-<li>Relative risk is a ratio which compares the likelihood of an event or outcome across multiple groups.</li>
-</ul>
-</div>
-</div>
-<div class="fragment" data-fragment-index="2">
-<p><img data-src="images/phoenix-wright-discrimination.png" class="absolute" style="left: 0px; bottom: 50px; height: 500px; "></p>
-</div>
-<div class="fragment" data-fragment-index="3">
-<p><img data-src="images/apollo-justice-discrimination.png" class="absolute" style="bottom: 0px; right: 0px; height: 500px; "></p>
-</div>
-</section>
-<section id="the-odds-ratio" class="slide level2">
-<h2>The Odds Ratio</h2>
-<div>
-<ul>
-<li class="fragment">The odds ratio is a measurement which can be used to quantify the association between a pair of events.</li>
-<li class="fragment">In this situation, the <span class="secondary">odds ratio</span> may be a better metric for assessing whether these layoffs were discriminatory towards Black employees.</li>
-<li class="fragment">In this legal case, the odds ratio is <span class="math inline">\(\frac{130/1382}{87/2813} = 3.04\)</span>.
-<ul>
-<li class="fragment">This signifies a strong association between an employee being Black and an employee being fired.</li>
-</ul></li>
-</ul>
-</div>
-</section>
-<section id="fishers-exact-test" class="slide level2">
-<h2>Fisher’s Exact Test</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
-<div class="fragment" data-fragment-index="1">
-<ul>
-<li><span class="secondary">Fisher’s Exact Test</span> is a statistical test which is used for analyzing contingency tables.</li>
-<li>The test assumes that the margins of the table are fixed.</li>
-</ul>
-</div>
-<div class="fragment" data-fragment-index="3">
-<ul>
-<li>If employees are fired “fairly” (without discrimination based on race), the odds ratio should be close to 1.
-<ul>
-<li>We can write this as a null hypothesis; <span class="math inline">\(H_0: \text{OR} = 1\)</span>, with <span class="math inline">\(H_A: \text{OR} \ne 1\)</span>.</li>
-</ul></li>
-</ul>
-</div>
-</div><div class="column" style="width:40%;">
-<div style="font-size: 75%;">
-<div class="fragment" data-fragment-index="2">
-<div class="cell">
-<div class="cell-output-display">
-<table data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Fired</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Retained</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Total</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; border-left: 1px solid; border-right: 1px solid;">Black</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid;">130</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid;">1382</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid; font-weight: bold;">1512</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; border-left: 1px solid; border-right: 1px solid;">White</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid;">87</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid;">2813</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid; font-weight: bold;">2900</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; border-left: 1px solid; border-right: 1px solid; font-weight: bold; border-bottom-style: solid;">Total</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid; font-weight: bold; border-bottom-style: solid;">217</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid; font-weight: bold; border-bottom-style: solid;">4195</td>
-<td style="text-align: right; border-left: 1px solid; border-right: 1px solid; font-weight: bold; font-weight: bold; border-bottom-style: solid;">4412</td>
-</tr>
-</tbody>
-</table>
-
-
-</div>
-</div>
-</div>
-</div>
-<div class="fragment" data-fragment-index="4">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>
-
-
-
-
-
-
-
-The p-value for this hypothesis test is 3.09e-15.
-
-The 95% confidence interval for the odds ratio is (2.28, 4.07).</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section></section>
-<section>
-<section id="calculating-the-remedy" class="title-slide slide level1 center" data-visibility="uncounted" data-background-color="#005500">
-<h1><span style="color:#fafafa;">Calculating the Remedy</span></h1>
-
-</section>
-<section id="remedying-a-salary-gap" class="slide level2">
-<h2>Remedying a Salary Gap</h2>
-<div class="columns">
-<div class="column" style="width:40%;">
-<ul>
-<li><em>EEOC</em> <sup>1</sup> <em>vs.&nbsp;Shelby County</em> (1988) is a case from Tennessee concerning unequal pay for male and female employees of the County.</li>
-<li>In this lawsuit, the <span class="tertiary">remedy</span> was determined using statistical modelling.</li>
-</ul>
-</div><div class="column" style="width:60%;">
-<div class="fragment" data-fragment-index="1">
-<div class="cell">
-<div class="cell-output-display">
-<p><img data-src="presentation_files/figure-revealjs/salary-data-plot-1.png" width="1056"></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Equal Employment Opportunity Commission</p></li></ol></aside></section>
-<section id="investigating-the-pay-inequality" class="slide level2">
-<h2>Investigating the Pay Inequality</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
-<div class="fragment" data-fragment-index="1">
-<ul>
-<li>In this lawsuit, the <span class="tertiary">disparate impact</span> of discrimination is the difference in monthly salary between male and female employees.</li>
-</ul>
-</div>
-<div class="fragment" data-fragment-index="2">
-<ul>
-<li><p><span class="secondary">Linear regression</span> can be used to determine the significance of this difference.</p>
-<div class="fragment" data-fragment-index="2">
-<ul>
-<li>The <span class="secondary">null hypothesis</span> (<span class="math inline">\(H_0\)</span>) is that sex does not impact salary.</li>
-</ul>
-</div></li>
-</ul>
-</div>
-</div><div class="column" style="width:40%;">
-<div class="fragment" data-fragment-index="3">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>
-
-
-
-
-
-The p-value corresponding to the Sex variable is 1.86e-05.
-
-
-
-The estimated effect of Sex on salary is $199.11 per month.</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="peters-belson-regression" class="slide level2">
-<h2>Peters-Belson Regression</h2>
-<div>
-<ul>
-<li class="fragment">Based on these outputs, it seems that the average female employee makes $199.11 less per month than a male employee with the same seniority level.</li>
-<li class="fragment">The <span class="tertiary">legal remedy</span> <em>could</em> be to pay each female employee $199.11 per month to make up the difference.
-<ul>
-<li class="fragment">However, seniority is also linearly correlated with the monthly salary.</li>
-</ul></li>
-<li class="fragment"><span class="secondary">Peters-Belsen regression</span> estimates the salary which each female employee would have earned, if they were paid like male employees.
-<ul>
-<li class="fragment">The legal remedy for each female employee is the difference between the earned salary and their deserved salary.</li>
-</ul></li>
-</ul>
-</div>
-</section>
-<section id="peters-belson-regression-1" class="slide level2">
-<h2>Peters-Belson Regression</h2>
-
-<img data-src="presentation_files/figure-revealjs/peters-belson-regression-1.png" style="width:95.0%" class="r-stretch"></section></section>
-<section>
-<section id="key-messages" class="title-slide slide level1 center" data-visibility="uncounted" data-background-color="#005500">
-<h1><span style="color:#fafafa;">Key Messages</span></h1>
-
-</section>
-<section id="key-messages-1" class="slide level2" style="font-size: 80%;">
-<h2>Key Messages</h2>
-<div>
-<ul>
-<li class="fragment">Statistical methods and models are highly applicable in legal cases, particularly in civil lawsuits.</li>
-<li class="fragment">We can view these civil lawsuits using a <span class="secondary">hypothesis test</span>.</li>
-<li class="fragment"><span class="secondary">Fisher’s Exact Test</span> can determine if there is a disparate impact between groups.
-<ul>
-<li class="fragment">The null hypothesis (<span class="math inline">\(H_0\)</span>) is that there is no disparate impact; the odds ratio is 1.</li>
-<li class="fragment">Fisher’s Exact Test is best for 2x2 contingency tables, but it still works for larger tables.</li>
-</ul></li>
-<li class="fragment">We can use <span class="secondary">Peters-Belson regression</span> to determine the legal remedy for a disparate impact in salary or payment.
-<ul>
-<li class="fragment">PB regression is fitted based only on the values from the non-impacted group.</li>
-<li class="fragment">The estimated outcomes from PB regression represent the expected salary of someone who is not discriminated against.</li>
-<li class="fragment">The legal remedy ensures that all employees are paid as if they are members of the “majority group”.</li>
-</ul></li>
-</ul>
-</div>
-</section></section>
-<section>
-<section id="section" class="title-slide slide level1 center" data-visibility="uncounted" data-background-image="images/la-fin.jpeg">
-<h1></h1>
-
-</section>
-<section id="works-cited" class="slide level2" style="font-size: 75%;">
-<h2>Works Cited</h2>
-<ul>
-<li>Council 31, AFSCME v. Ward, 771 F. Supp. 247 (N.D. Ill. 1991). <a href="https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/" class="uri">https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/</a></li>
-<li>Department of Justice Canada. (2021, September 1). <em>Civil and criminal cases</em>. Department of Justice. <a href="https://www.justice.gc.ca/eng/csj-sjc/just/08.html" class="uri">https://www.justice.gc.ca/eng/csj-sjc/just/08.html</a></li>
-<li>EEOC v. Shelby County Government, 707 F. Supp. 969 (W.D. Tenn. 1988). <a href="https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/" class="uri">https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/</a></li>
-<li>Gastwirth, J. L., &amp; Greenhouse, S. W. (1995). Biostatistical concepts and methods in the legal setting. <em>Statistics in Medicine, 14</em>(15), 1641–1653. <a href="https://doi.org/10.1002/sim.4780141505" class="uri">https://doi.org/10.1002/sim.4780141505</a></li>
-<li>Graubard, B. I., Sowmya Rao, R., &amp; Gastwirth, J. L. (2005). Using the Peters-Belson method to measure health care disparities from complex survey data. <em>Statistics in Medicine, 24</em>(17), 2659–2668. <a href="https://doi.org/10.1002/sim.2135" class="uri">https://doi.org/10.1002/sim.2135</a></li>
-<li>Gray, Ritter &amp; Graham, P.C. . (2013, June 18). <em>Criminal vs.&nbsp;Civil Court Cases</em>. The Judicial Learning Center. <a href="https://judiciallearningcenter.org/types-of-court-cases/" class="uri">https://judiciallearningcenter.org/types-of-court-cases/</a></li>
-<li>Rosenthal, J. S. (2015). Probability, Justice, and the Risk of Wrongful Conviction. <em>The Mathematics Enthusiast, 12</em>(1–3), 11–18. <a href="https://doi.org/10.54870/1551-3440.1330" class="uri">https://doi.org/10.54870/1551-3440.1330</a></li>
-</ul>
+<!-- ## Works Cited{style="font-size: 75%;"} -->
+<!-- - Council 31, AFSCME v. Ward, 771 F. Supp. 247 (N.D. Ill. 1991). <https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/> -->
+<!-- - Department of Justice Canada. (2021, September 1). *Civil and criminal cases*. Department of Justice. <https://www.justice.gc.ca/eng/csj-sjc/just/08.html>  -->
+<!-- - EEOC v. Shelby County Government, 707 F. Supp. 969 (W.D. Tenn. 1988). <https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/> -->
+<!-- - Gastwirth, J. L., & Greenhouse, S. W. (1995). Biostatistical concepts and methods in the legal setting. *Statistics in Medicine, 14*(15), 1641–1653. <https://doi.org/10.1002/sim.4780141505> -->
+<!-- - Graubard, B. I., Sowmya Rao, R., & Gastwirth, J. L. (2005). Using the Peters-Belson method to measure health care disparities from complex survey data. *Statistics in Medicine, 24*(17), 2659–2668. <https://doi.org/10.1002/sim.2135> -->
+<!-- - Gray, Ritter & Graham, P.C. . (2013, June 18). *Criminal vs. Civil Court Cases*. The Judicial Learning Center. <https://judiciallearningcenter.org/types-of-court-cases/> -->
+<!-- - Rosenthal, J. S. (2015). Probability, Justice, and the Risk of Wrongful Conviction. *The Mathematics Enthusiast, 12*(1–3), 11–18. <https://doi.org/10.54870/1551-3440.1330> -->
 <div class="footer footer-default">
 
 </div>
-</section></section>
-
+</section>
     </div>
   </div>
 

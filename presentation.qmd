@@ -1,14 +1,20 @@
 ---
 title: 
-  "*Discriminating* Between Statistical Tests"
+  "Bayesian Functional Optimization"
 subtitle:
-  "Applications of Probabilistic Methods and Models<br>in Discrimination Lawsuits in the United States"
+  "Subtitle"
 author: 
   "Joey Hotz"
+date: 
+  today
+date-format:
+  "[Last Updated:] DD MMMM YYYY"
 format: 
   revealjs:
     slide-number: true
     theme: [default, custom.scss]
+editor: 
+  source
 ---
 
 ```{r setup, warning = FALSE, comment = FALSE, message = FALSE}
@@ -20,298 +26,18 @@ library(tidyverse)
 
 ## Table of Contents
 
-1.  Legal Background
+## Problem Statement
 
-1. Example 1: Testing for Discrimination
+## Applications
 
-1. Example 2: Calculating the Remedy
+## Works Cited
 
-1. Key Takeaways
+<!-- ## Works Cited{style="font-size: 75%;"} -->
 
-# [Legal Background]{style="color:#fafafa;"} {visibility="uncounted" background-color=#005500}
-
-## Criminal and Civil Cases
-
-In the U.S. Justice System, there are two forms of legal proceedings; [criminal law]{.tertiary} and [civil law]{.tertiary}.
-
-::::: panel-tabset
-
-### Criminal Law
-
-:::: {style="font-size: 80%; width: 550px;"}
-- The defendant is [presumed innocent until proven guilty]{.tertiary} of a criminal act.
-- The burden of proof is on the prosecution to prove that the defendant is guilty [beyond a reasonable doubt]{.tertiary}.
-::::
-![](images/handcuffs.png){.absolute bottom=100 right=0 width=500}
-
-### Civil Law
-::: {style="font-size: 80%; width: 550px;"}
-- The defendant is accused of causing harm and/or damages through their actions.
-- The plaintiff must show that the defendant is *likely* liable for damages based on a "[preponderance of the evidence]{.tertiary}".
-- If the defendant is found liable, the court will determine a [legal remedy]{.tertiary} to compensate for the harm to the plaintiff(s).  
-:::
-![](images/balance-of-probabilities.png){.absolute bottom=0 right=0 width=450}
-:::::
-
-## Proving Discrimination 
-::: {.incremental}
- - Legally, [discrimination]{.tertiary} occurs when a person is unfairly disadvantaged due to a [protected ground]{.tertiary}, such as:
-     * Age
-     * Sex
-     * Gender identity/presentation
-     * Race
- - Note: Discrimination does **not** have to be intentional. The legal definition considers impact, not intent.
- - Discrimination lawsuits are primarily handled in civil courts, where the burden of proof is a balance of probabilities.
-:::
-
-## Statistical Interpretation
-::: {.incremental}
- - We can consider these discrimination lawsuits under a [hypothesis testing]{.secondary} framework.
- - The [null hypothesis]{.secondary} ($H_0$) is that there is no discrimination in the provided scenario.
-     * Rejecting $H_0$ is equivalent to finding the defendant liable.
-     * Failing to reject $H_0$ means that there is not sufficient enough evidence to convince the court of discrimination.
-:::
-
-# [Testing for Discrimination]{style="color:#fafafa;"} {visibility="uncounted" background-color=#005500}
-
-## Discrimination in Employee Layoffs
-::: {.incremental}
- - *Council 31 v. Ward* (1991) is a legal case from Illinois concerning a mass layoff of over 200 government employees.
- - 40.1% of the fired employees were Black, despite the fact that Black employees comprised only 34.3% of the workforce.
- - The plaintiffs argued that these layoffs discriminated against Black employees due to their race.
-:::
-
-. . .
-
-::: {style="font-size: 80%;"}
-
-```{r example-1-table-1}
-firing.disc.df <- data.frame("Total" = c(1512, 2900), "Fired" = c(130, 87),
-                                "Retained" = c(1512 - 130, 2900 - 87), 
-                                row.names = c("Black", "White"))
-
-firing.disc.df["% Fired"] = 100 * firing.disc.df$Fired/firing.disc.df$Total
-firing.disc.df["% Retained"] = 100 * firing.disc.df$Retained/firing.disc.df$Total
-firing.disc.df["% Fired"] =
-  paste0(formatC(firing.disc.df$`% Fired`, digits = 1, format = "f"), "%")
-firing.disc.df["% Retained"] =
-  paste0(formatC(firing.disc.df$`% Retained`, digits = 1, format = "f"), "%")
-
-firing.disc.df %>%
-  kable(align = "r", caption = "Table 1: Employee layoffs by race") %>%
-  column_spec(column = 1, border_left = TRUE) %>%
-  column_spec(column = c(1,4,6), border_right = TRUE) %>%
-  row_spec(row = c(0,2), extra_css = "border-bottom-style: solid") 
-```
-
-:::
-
-## Applying Relative Risk
-
-::: {.fragment fragment-index=1}
-::: {.fragment .fade-out fragment-index=2}
- - The standard in many discrimination cases is to examine the [relative risk]{.secondary} between the groups. 
- - Relative risk is a ratio which compares the likelihood of an event or outcome across multiple groups.
-:::
-:::
-
-::: {.fragment fragment-index=2}
-![](images/phoenix-wright-discrimination.png){.absolute bottom=50 left=0 height=500}
-:::
-
-::: {.fragment fragment-index=3}
-![](images/apollo-justice-discrimination.png){.absolute bottom=0 right=0 height=500}
-:::
-
-## The Odds Ratio
-
-::: {.incremental}
- - The odds ratio is a measurement which can be used to quantify the association between a pair of events. 
- - In this situation, the [odds ratio]{.secondary} may be a better metric for assessing whether these layoffs were discriminatory towards Black employees.
- - In this legal case, the odds ratio is $\frac{130/1382}{87/2813} = 3.04$.
-     * This signifies a strong association between an employee being Black and an employee being fired.
-:::
-
-## Fisher's Exact Test
-
-::::: {.columns}
-:::: {.column width="60%"}
-::: {.fragment fragment-index=1}
- - [Fisher's Exact Test]{.secondary} is a statistical test which is used for analyzing contingency tables.
- - The test assumes that the margins of the table are fixed.
-:::
-::: {.fragment fragment-index=3}
- - If employees are fired "fairly" (without discrimination based on race), the odds ratio should be close to 1.
-     * We can write this as a null hypothesis; $H_0: \text{OR} = 1$, with $H_A: \text{OR} \ne 1$.
-:::
-::::
-
-:::: {.column width="40%"}
-::: {style="font-size: 75%;"}
-::: {.fragment fragment-index=2}
-```{r finding-marginals}
-marginal.disc.df <- firing.disc.df[, 2:3]
-marginal.disc.df <- cbind(marginal.disc.df, "Total" = rowSums(marginal.disc.df))
-marginal.disc.df <- rbind(marginal.disc.df, "Total" = colSums(marginal.disc.df))
-
-marginal.disc.df %>%
-  kable(align = "r") %>%
-  column_spec(column = 1:4, border_left = TRUE, border_right = TRUE) %>%
-  column_spec(4, bold = TRUE) %>%
-  row_spec(row = 0:3, hline_after = TRUE) %>%
-  row_spec(row = 3, extra_css = "border-bottom-style: solid", bold = TRUE) 
-```
-:::
-:::
-::: {.fragment fragment-index=4}
-```{r fisher-exact-test, message = FALSE, echo = FALSE}
-fisher <- fisher.test(marginal.disc.df[1:2,1:2], alternative = "two.sided")
-fisherCI <- fisher$conf.int
-
-cat(paste0("\n\n\n\n\n\n\n\n", 
-           "The p-value for this hypothesis test is ", 
-           signif(fisher$p.value, 3), ".\n\n",
-           "The 95% confidence interval for the odds ratio is ", 
-           "(", round(fisherCI[1], 2), ", ", round(fisherCI[2], 2), ").\n"))
-```
-:::
-::::
-:::::
-
-# [Calculating the Remedy]{style="color:#fafafa;"} {visibility="uncounted" background-color=#005500}
-
-## Remedying a Salary Gap
-
-::::: {.columns}
-:::: {.column width="40%"}
- - *EEOC* ^[Equal Employment Opportunity Commission] *vs. Shelby County* (1988) is a case from Tennessee concerning unequal pay for male and female employees of the County. 
- - In this lawsuit, the [remedy]{.tertiary} was determined using statistical modelling. 
-::::
-:::: {.column width="60%"} 
-::: {.fragment fragment-index=1}
-```{r salary-data-plot, fig.width = 11, fig.height = 8}
-salary.df <- read_csv("salary_seniority.csv", col_types = "fnfn")
-
-salary.df %>% 
-  ggplot(aes(x = Seniority, y = Salary, color = Sex)) +
-  geom_point() +
-  scale_color_brewer(palette = "Dark2") +
-  theme_bw() +
-  labs(x = "Seniority (Months)", y = "Monthly Salary (USD)", 
-       title = paste0("Monthly Salary and seniority of 23 clerical employees in the", 
-                      "\n", "Shelby County Criminal Court Clerk’s Office")) +
-  ylim(0, NA) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme(plot.background = element_rect(fill = "#ffffff", colour = "#005500")) +
-  moderndive::geom_parallel_slopes(se = FALSE, linetype = "longdash")
-```
-:::
-::::
-:::::
-
-## Investigating the Pay Inequality
-
-::::: {.columns}
-
-:::: {.column width="60%"}
-
-::: {.fragment fragment-index=1}
-- In this lawsuit, the [disparate impact]{.tertiary} of discrimination is the difference in monthly salary between male and female employees.
-:::
-
-::: {.fragment fragment-index=2}
-- [Linear regression]{.secondary} can be used to determine the significance of this difference.
-
-  ::: {.fragment fragment-index=2}
-  - The [null hypothesis]{.secondary} ($H_0$) is that sex does not impact salary.
-  :::
-  
-:::
-
-::::
-
-:::: {.column width="40%"}
-
-::: {.fragment fragment-index=3}
-
-```{r linear-regression-methods-1, comment = NA}
-lm_fit_1 <- lm(Salary ~ Seniority + Sex, data = salary.df)
-
-salary_diff_pval <- summary(lm_fit_1)$coefficients["SexM", 4]
-sex_effect <- summary(lm_fit_1)$coefficients["SexM", 1]
-
-cat(paste0("\n\n\n\n\n\n", "The p-value corresponding to the Sex variable is ", 
-           signif(salary_diff_pval, 3), ".\n\n\n\n", 
-           "The estimated effect of Sex on salary is $", round(sex_effect, 2), 
-           " per month.", "\n\n\n\n\n\n"))
-```
-:::
-
-::::
-
-:::::
-
-## Peters-Belson Regression
-::: {.incremental}
- - Based on these outputs, it seems that the average female employee makes $`r round(sex_effect, 2)` less per month than a male employee with the same seniority level. 
- - The [legal remedy]{.tertiary} *could* be to pay each female employee $`r round(sex_effect, 2)` per month to make up the difference. 
-     * However, seniority is also linearly correlated with the monthly salary.
- - [Peters-Belsen regression]{.secondary} estimates the salary which each female employee would have earned, if they were paid like male employees.
-     * The legal remedy for each female employee is the difference between the earned salary and their deserved salary.
-:::
-
-## Peters-Belson Regression
-
-```{r peters-belson-regression, out.width="95%"}
-lm_fit_2 <- lm(Salary ~ Seniority, data = salary.df, 
-               subset = salary.df$Sex == "M")
-male_fit_coefs <- unname(lm_fit_2$coefficients)
-
-female_salary.df <- salary.df %>%
-  filter(Sex == "F") %>%
-  select(Seniority, "Amount Paid" = Salary) %>%
-  mutate(`Sex Effect` = `Amount Paid` + sex_effect) %>%
-  mutate(`PB Regression` = Seniority * male_fit_coefs[2] + male_fit_coefs[1]) %>%
-  pivot_longer(c("Sex Effect", "PB Regression"), names_to = "Formula", 
-               values_to = "Payment")
-
-female_salary.df %>%
-  ggplot(aes(x = Seniority, y = Payment, color = Formula)) +
-  geom_point() +
-  scale_color_brewer(palette = "Set1") +
-  theme_bw() +
-  labs(x = "Seniority (Months)", y = "\"Remedied\" Monthly Salary (USD)", 
-       title = paste0("Adjusted monthly salary and seniority of the 14 female employees in the", 
-                      "\n", "Shelby County Criminal Court Clerk’s Office")) +
-  ylim(0, NA) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme(plot.background = element_rect(fill = "#ffffff", colour = "#005500")) +
-  geom_smooth(method = "lm", se = FALSE, linetype = "longdash")
-```
-
-# [Key Messages]{style="color:#fafafa;"} {visibility="uncounted" background-color=#005500}
-
-## Key Messages{style="font-size: 80%;"}
-::: {.incremental}
- - Statistical methods and models are highly applicable in legal cases, particularly in civil lawsuits.
- - We can view these civil lawsuits using a [hypothesis test]{.secondary}.
- - [Fisher's Exact Test]{.secondary} can determine if there is a disparate impact between groups.
-     * The null hypothesis ($H_0$) is that there is no disparate impact; the odds ratio is 1.
-     * Fisher's Exact Test is best for 2x2 contingency tables, but it still works for larger tables.
- - We can use [Peters-Belson regression]{.secondary} to determine the legal remedy for a disparate impact in salary or payment.
-     * PB regression is fitted based only on the values from the non-impacted group.
-     * The estimated outcomes from PB regression represent the expected salary of someone who is not discriminated against.
-     * The legal remedy ensures that all employees are paid as if they are members of the "majority group".
-:::
-
-# {visibility="uncounted" background-image="images/la-fin.jpeg"}
-
-## Works Cited{style="font-size: 75%;"}
-
-- Council 31, AFSCME v. Ward, 771 F. Supp. 247 (N.D. Ill. 1991). <https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/>
-- Department of Justice Canada. (2021, September 1). *Civil and criminal cases*. Department of Justice. <https://www.justice.gc.ca/eng/csj-sjc/just/08.html> 
-- EEOC v. Shelby County Government, 707 F. Supp. 969 (W.D. Tenn. 1988). <https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/>
-- Gastwirth, J. L., & Greenhouse, S. W. (1995). Biostatistical concepts and methods in the legal setting. *Statistics in Medicine, 14*(15), 1641–1653. <https://doi.org/10.1002/sim.4780141505>
-- Graubard, B. I., Sowmya Rao, R., & Gastwirth, J. L. (2005). Using the Peters-Belson method to measure health care disparities from complex survey data. *Statistics in Medicine, 24*(17), 2659–2668. <https://doi.org/10.1002/sim.2135>
-- Gray, Ritter & Graham, P.C. . (2013, June 18). *Criminal vs. Civil Court Cases*. The Judicial Learning Center. <https://judiciallearningcenter.org/types-of-court-cases/>
-- Rosenthal, J. S. (2015). Probability, Justice, and the Risk of Wrongful Conviction. *The Mathematics Enthusiast, 12*(1–3), 11–18. <https://doi.org/10.54870/1551-3440.1330>
+<!-- - Council 31, AFSCME v. Ward, 771 F. Supp. 247 (N.D. Ill. 1991). <https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/> -->
+<!-- - Department of Justice Canada. (2021, September 1). *Civil and criminal cases*. Department of Justice. <https://www.justice.gc.ca/eng/csj-sjc/just/08.html>  -->
+<!-- - EEOC v. Shelby County Government, 707 F. Supp. 969 (W.D. Tenn. 1988). <https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/> -->
+<!-- - Gastwirth, J. L., & Greenhouse, S. W. (1995). Biostatistical concepts and methods in the legal setting. *Statistics in Medicine, 14*(15), 1641–1653. <https://doi.org/10.1002/sim.4780141505> -->
+<!-- - Graubard, B. I., Sowmya Rao, R., & Gastwirth, J. L. (2005). Using the Peters-Belson method to measure health care disparities from complex survey data. *Statistics in Medicine, 24*(17), 2659–2668. <https://doi.org/10.1002/sim.2135> -->
+<!-- - Gray, Ritter & Graham, P.C. . (2013, June 18). *Criminal vs. Civil Court Cases*. The Judicial Learning Center. <https://judiciallearningcenter.org/types-of-court-cases/> -->
+<!-- - Rosenthal, J. S. (2015). Probability, Justice, and the Risk of Wrongful Conviction. *The Mathematics Enthusiast, 12*(1–3), 11–18. <https://doi.org/10.54870/1551-3440.1330> -->

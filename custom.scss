@@ -2,17 +2,14 @@
 
 $body-bg: #fafafa;
 $body-color: #000000;
-$primary: #005500;
-$secondary: #ff9900;
-$tertiary: #bb44ff;
-$quaternary: #22ff22;
-$presentation-heading-color: $primary;
-$link-color: $secondary;
+$heading: #005500;
+$emphasis-one: #ff9900;
+$emphasis-two: #9933ff99;
+$presentation-heading-color: $heading;
+$link-color: #0022dd;
 
-.primary {color: $primary;}
-.secondary {color: $secondary;}
-.tertiary {color: $tertiary;}
-.quaternary {color: $quaternary;}
+.emphone {color: $emphasis-one;}
+.emphtwo {color: $emphasis-two}
 
 $presentation-font-size-root: 35px;
 
