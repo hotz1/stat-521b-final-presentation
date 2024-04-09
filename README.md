@@ -1,7 +1,7 @@
-# STAT 550 Paper Presentation
+# STAT 521B Final Presentation
 
-### [<u>Link To Presentation</u>](https://hotz1.github.io/stat-550-paper-presentation/presentation.html)
+### [<u>Link To Presentation</u>](https://hotz1.github.io/stat-521b-final-presentation/presentation.html)
 
-This is a small GitHub Pages site I created for a paper presentation which I did for my STAT 550 course.
+This is a small GitHub repository which I created for the Final Project for my STAT 521B course at UBC. The primary purpose of this repository is to contain the presentation slides and information for the deployment onto GitHub Pages.
 
-This presentation is primarily based on the paper [*Biostatistical concepts and methods in the legal setting*](https://onlinelibrary.wiley.com/doi/10.1002/sim.4780141505) by Joseph L. Gastwirth and Samuel W. Greenhouse. 
+My paper presentation is based on the paper [*Bayesian Functional Optimization*](https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf) by Ngo Anh Vien, Heiko Zimmermann, and Marc Toussaint, with various additional citations and ferences as shown in the last slide of the presentation.
