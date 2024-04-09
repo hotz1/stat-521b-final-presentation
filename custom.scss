@@ -1,0 +1,24 @@
+/*-- scss:defaults --*/
+
+$body-bg: #fafafa;
+$body-color: #000000;
+$primary: #005500;
+$secondary: #ff9900;
+$tertiary: #bb44ff;
+$quaternary: #22ff22;
+$presentation-heading-color: $primary;
+$link-color: $secondary;
+
+.primary {color: $primary;}
+.secondary {color: $secondary;}
+.tertiary {color: $tertiary;}
+.quaternary {color: $quaternary;}
+
+$presentation-font-size-root: 35px;
+
+/*-- scss:rules --*/
+
+.reveal .slide blockquote {
+  border-left: 3px solid $text-muted;
+  padding-left: 0.5em;
+}
