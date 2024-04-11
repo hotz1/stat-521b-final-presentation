@@ -336,27 +336,26 @@ Joey Hotz
 </div>
 </div>
 
-  <p class="date">Last Updated: 10 April 2024</p>
+  <p class="date">Last Updated: 11 April 2024</p>
 </section>
 <section id="table-of-contents" class="slide level2">
 <h2>Table of Contents</h2>
 <ul>
-<li></li>
-<li></li>
+<li>Standard Bayesian Optimization</li>
+<li>Bayesian Functional Optimization</li>
 <li></li>
 </ul>
 </section>
 <section>
-<section id="problem-background" class="title-slide slide level1 center" data-background-color="#005500">
-<h1><span style="color:#fafafa;">Problem Background</span></h1>
+<section id="standard-bayesian-optimization" class="title-slide slide level1 center" data-background-color="#005500">
+<h1><span style="color:#fafafa;">Standard Bayesian Optimization</span></h1>
 
 </section>
-<section id="objective" class="slide level2">
-<h2>Objective</h2>
-<h3 id="problem-background-1">Problem Background</h3>
+<section id="objectives" class="slide level2">
+<h2>Objectives</h2>
 <div class="fragment" data-fragment-index="1">
 <ul>
-<li>Suppose we have some unknown <span style="color:#ff9900">black-box</span> real-valued function <span class="math inline">\(\tilde{f}\)</span> defined on a closed and bounded subset <span class="math inline">\(\mathcal{X} \subseteq \mathbb{R}^{d}\)</span>.</li>
+<li>We have an unknown <span style="color:#ff9900">black-box</span> real-valued function <span class="math inline">\(\tilde{f}\)</span> defined on a closed and bounded subset <span class="math inline">\(\mathcal{X} \subseteq \mathbb{R}^{d}\)</span>.</li>
 </ul>
 </div>
 <div class="fragment" data-fragment-index="2">
@@ -369,9 +368,127 @@ Joey Hotz
 </div>
 <div class="fragment" data-fragment-index="3">
 <ul>
-<li>Goal: <strong>Find the <span style="color:#ff9900">global maximum</span></strong> <span class="math inline">\(x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)\)</span> <strong>and maintain a low overall evaluation cost.</strong></li>
+<li>Goal: <strong>Find the <span style="color:#ff9900">global maximum</span></strong> <span class="math inline">\(x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)\)</span>.</li>
 </ul>
 </div>
+</section>
+<section id="gaussian-processes" class="slide level2">
+<h2>Gaussian Processes</h2>
+<div>
+<ul>
+<li class="fragment">A common model for Bayesian optimization is to perform regression using <span style="color:#ff9900">Gaussian processes</span>.</li>
+<li class="fragment">A Gaussian process (GP) is a stochastic process which is modelled using multivariate Normal distributions.
+<ul>
+<li class="fragment">A GP is fully specified by its mean <span class="math inline">\(\mu(\cdot)\)</span> and covariance <span class="math inline">\(k(\cdot, \cdot)\)</span>.</li>
+</ul></li>
+<li class="fragment">For Bayesian optimization, we assume <span class="math inline">\(f(x) \sim \mathcal{GP}(\mu(x), k(x, \cdot))\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="gaussian-process-example" class="slide level2">
+<h2>Gaussian Process Example</h2>
+<div class="fragment" data-fragment-index="1">
+<p>To demonstrate a GP, we will define the following “unknown” smooth function <span class="math inline">\(\tilde{f}(x)\)</span> on the interval <span class="math inline">\([0,10]\)</span>: <span class="math display">\[
+\tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
+\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="2">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/true_example_fn.jpg" class="nostretch" width="500"></p>
+</figure>
+</div>
+</div>
+</section>
+<section id="gaussian-process-example-1" class="slide level2">
+<h2>Gaussian Process Example</h2>
+<div class="r-stack">
+<div class="fragment fade-in" data-fragment-index="1">
+<div class="fragment fade-out" data-fragment-index="2">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP_prior.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="2">
+<div class="fragment fade-out" data-fragment-index="3">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP1_noise_high.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<div class="fragment fade-out" data-fragment-index="4">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP2_noise_high.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="4">
+<div class="fragment fade-out" data-fragment-index="5">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP5_noise_high.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="5">
+<div class="fragment fade-out" data-fragment-index="6">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP10_noise_high.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="6">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/GP20_noise_high.jpg" class="nostretch" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="acquisition-functions" class="slide level2">
+<h2>Acquisition Functions</h2>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="3">
+<div class="fragment fade-in" data-fragment-index="1">
+<ul>
+<li>In Bayesian optimization, we sequentially choose points <span class="math inline">\(x_{n} \in \mathcal{X}\)</span> where we want to evaluate <span class="math inline">\(f(x_{n})\)</span>.</li>
+</ul>
+</div>
+<div class="fragment fade-in" data-fragment-index="2">
+<ul>
+<li>There are three common decision rules for selecting <span class="math inline">\(x_{n+1}\)</span>:
+<ul>
+<li>Probability of Improvement</li>
+<li>Expected Improvement</li>
+<li>Gaussian Process Upper Confidence Bound (GP-UCB)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="4">
+<p><img data-src="images/GP20_noise_high.jpg" class="absolute" style="top: 200px; left: 0px; width: 47.5%; "></p>
+</div>
+<div class="fragment fade-in" data-fragment-index="4">
+<p><img data-src="images/acquisition_plots.jpg" class="absolute" style="top: 200px; right: 0px; width: 47.5%; "></p>
+</div>
+</div>
+</section></section>
+<section>
+<section id="bayesian-functional-optimization" class="title-slide slide level1 center" data-background-color="#005500">
+<h1><span style="color:#fafafa;">Bayesian Functional Optimization</span></h1>
+
 </section>
 <section id="reproducing-kernel-hilbert-spaces" class="slide level2">
 <h2>Reproducing Kernel Hilbert Spaces</h2>
@@ -395,21 +512,12 @@ Joey Hotz
 </ul>
 </div>
 </div>
-</section>
-<section id="gaussian-processes" class="slide level2">
-<h2>Gaussian Processes</h2>
-<div>
-<p>-f</p>
-</div>
-</section>
-<section id="applications" class="slide level2">
-<h2>Applications</h2>
-</section>
-<section id="simulations" class="slide level2">
-<h2>Simulations</h2>
-<p>For our example simulations, we define the following “unknown” smooth function <span class="math inline">\(\tilde{f}(x)\)</span> on the interval <span class="math inline">\([0,10]\)</span>: <span class="math display">\[
-\tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
-\]</span></p>
+<!-- ## Applications -->
+<!-- ## Simulations -->
+<!-- For our example simulations, we define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$: -->
+<!-- $$ -->
+<!-- \tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big) -->
+<!-- $$ -->
 </section>
 <section id="works-cited" class="slide level2">
 <h2>Works Cited</h2>

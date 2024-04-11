@@ -81,6 +81,7 @@ plot_GP_regression <- function(GP_estimates, GP_observed){
          subtitle = bquote("Based on"~.(nrow(GP_observed))~"samples and a Gaussian Process with prior"~mu~"= 0,"~sigma^2~"= 1")) +
     scale_x_continuous(breaks = seq(0, 10, 2)) +   
     theme_minimal() +
+    ylim(c(-2.5, 2.5)) +
     theme(plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
           plot.background = element_rect(fill = "#fafafa"))
@@ -104,15 +105,15 @@ GP_observed <- GP_observed %>%
 # Plot the functions
 for(n in c(1, 2, 5, 10, 20)){
   # Low noise
-  temp_low <- GP_observed %>% 
-    filter(row_number() <= n) %>%
-    select(x_obs, y_obs = y_obs_low)
+  # temp_low <- GP_observed %>% 
+  #   filter(row_number() <= n) %>%
+  #   select(x_obs, y_obs = y_obs_low)
+  # 
+  # plot_GP_regression(update_GP_estimates(GP_estimates, temp_low, 0.025), temp_low) %>%
+  #   ggsave(filename = here(paste0("images/GP", n, "_noise_low.jpg")),
+  #          width = 6, height = 4, units = "in")
   
-  plot_GP_regression(update_GP_estimates(GP_estimates, temp_low, 0.025), temp_low) %>%
-    ggsave(filename = here(paste0("images/GP", n, "_noise_low.jpg")),
-           width = 6, height = 4, units = "in")
-  
-  # Low noise
+  # High noise
   temp_high <- GP_observed %>% 
     filter(row_number() <= n) %>%
     select(x_obs, y_obs = y_obs_high)
@@ -148,7 +149,7 @@ GP_updated_high20 <- GP_updated_high20 %>%
         plot.background = element_rect(fill = "#fafafa"),
         strip.background = element_rect(fill = "#FFDF0040"),
         legend.position = "none"))
-# 
+ 
 # ggsave(here("images/acquisition_plots.jpg"), acquisition_plots,
 #        width = 6, height = 4, units = "in")
         

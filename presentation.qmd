@@ -33,8 +33,8 @@ library(tidyverse)
 
 ## Table of Contents
 
-- Bayesian Optimization
-- 
+- Standard Bayesian Optimization
+- Bayesian Functional Optimization
 - 
 
 # [Standard Bayesian Optimization]{style="color:#fafafa;"} {background-color=#005500}
@@ -56,8 +56,78 @@ library(tidyverse)
 
 ::: {.incremental}
 - A common model for Bayesian optimization is to perform regression using [Gaussian processes]{style="color:#ff9900"}.
-- A Gaussian process (GP) is a 
+- A Gaussian process (GP) is a stochastic process which is modelled using multivariate Normal distributions.
+  * A GP is fully specified by its mean $\mu(\cdot)$ and covariance $k(\cdot, \cdot)$.
+- For Bayesian optimization, we assume $f(x) \sim \mathcal{GP}(\mu(x), k(x, \cdot))$.
 :::
+
+## Gaussian Process Example
+
+::: {.fragment fragment-index=1}
+To demonstrate a GP, we will define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$:
+$$
+\tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
+$$
+:::
+::: {.fragment fragment-index=2}
+![](images/true_example_fn.jpg){.nostretch fig-align="center" width="500px"}
+:::
+
+## Gaussian Process Example
+
+::: {.r-stack}
+
+:::: {.fragment .fade-in fragment-index=1}
+::: {.fragment .fade-out fragment-index=2}
+![](images/GP_prior.jpg){.nostretch fig-align="center" width=85%}
+:::
+::::
+:::: {.fragment .fade-in fragment-index=2}
+::: {.fragment .fade-out fragment-index=3}
+![](images/GP1_noise_high.jpg){.nostretch fig-align="center" width=85%}
+:::
+::::
+:::: {.fragment .fade-in fragment-index=3}
+::: {.fragment .fade-out fragment-index=4}
+![](images/GP2_noise_high.jpg){.nostretch fig-align="center" width=85%}
+:::
+::::
+:::: {.fragment .fade-in fragment-index=4}
+::: {.fragment .fade-out fragment-index=5}
+![](images/GP5_noise_high.jpg){.nostretch fig-align="center" width=85%}
+:::
+::::
+:::: {.fragment .fade-in fragment-index=5}
+::: {.fragment .fade-out fragment-index=6}
+![](images/GP10_noise_high.jpg){.nostretch fig-align="center" width=85%}
+:::
+::::
+:::: {.fragment .fade-in fragment-index=6}
+![](images/GP20_noise_high.jpg){.nostretch fig-align="center" width=85%}
+::::
+:::
+
+## Acquisition Functions
+
+:::: {.r-stack}
+:::: {.fragment .fade-out fragment-index=3}
+::: {.fragment .fade-in fragment-index=1}
+- In Bayesian optimization, we sequentially choose points $x_{n} \in \mathcal{X}$ where we want to evaluate $f(x_{n})$.
+:::
+::: {.fragment .fade-in fragment-index=2}
+- There are three common decision rules for selecting $x_{n+1}$:
+  * Probability of Improvement
+  * Expected Improvement
+  * Gaussian Process Upper Confidence Bound (GP-UCB)
+:::
+::::
+::: {.fragment .fade-in fragment-index=4}
+![](images/GP20_noise_high.jpg){.absolute left=0 top=200 width=47.5%}
+:::
+::: {.fragment .fade-in fragment-index=4}
+![](images/acquisition_plots.jpg){.absolute right=0 top=200 width=47.5%}
+:::
+::::
 
 # [Bayesian Functional Optimization]{style="color:#fafafa;"} {background-color=#005500}
 
