@@ -35,7 +35,6 @@ library(tidyverse)
 
 - Standard Bayesian Optimization
 - Bayesian Functional Optimization
-- 
 
 # [Standard Bayesian Optimization]{style="color:#fafafa;"} {background-color=#005500}
 
