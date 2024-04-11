@@ -42,7 +42,7 @@ library(tidyverse)
 ## Objectives
 
 ::: {.fragment fragment-index=1}
-- We have an unknown [black-box]{style="color:#ff9900"} real-valued function $\tilde{f}$ defined on a closed and bounded subset $\mathcal{X} \subseteq \mathbb{R}^{d}$.
+- We have an unknown [black-box]{style="color:#ff9900"} real-valued function $\tilde{f}$ defined on a bounded set $\mathcal{X} \subset \mathbb{R}^{d}$.
 :::
 :::: {.fragment fragment-index=2}
 - At step $n = 1, 2, \dots$, we select a value $x_{n} \in \mathcal{X}$ and we get a *noisy* observation $y_{n} = \tilde{f}(x_{n}) + \epsilon_{n}$.
@@ -61,7 +61,7 @@ library(tidyverse)
 - For Bayesian optimization, we assume $f(x) \sim \mathcal{GP}(\mu(x), k(x, \cdot))$.
 :::
 
-## Gaussian Process Example
+## Gaussian Processes
 
 ::: {.fragment fragment-index=1}
 To demonstrate a GP, we will define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$:
@@ -73,7 +73,7 @@ $$
 ![](images/true_example_fn.jpg){.nostretch fig-align="center" width="500px"}
 :::
 
-## Gaussian Process Example
+## Gaussian Processes
 
 ::: {.r-stack}
 
@@ -115,10 +115,10 @@ $$
 - In Bayesian optimization, we sequentially choose points $x_{n} \in \mathcal{X}$ where we want to evaluate $f(x_{n})$.
 :::
 ::: {.fragment .fade-in fragment-index=2}
-- There are three common decision rules for selecting $x_{n+1}$:
-  * Probability of Improvement
-  * Expected Improvement
-  * Gaussian Process Upper Confidence Bound (GP-UCB)
+- There are three common decision rules for selecting $x_{n+1}$ based on the currently-sampled data:
+  * Probability of Improvement: $u_{\textrm{PI}}(x) = \mathbb{P}(\tilde{f}(x) > y_{\textrm{best}})$.
+  * Expected Improvement: $u_{\textrm{EI}}(x) = \mathbb{E}(\max\{\tilde{f}(x), y_{\textrm{best}}\} - y_{\textrm{best}})$.
+  * Gaussian Process Upper Confidence Bound (GP-UCB): $u_{\textrm{UCB}}(x) = \mu_{t}(x) + \beta_{t}^{1/2}\sigma_{t}(x)$.
 :::
 ::::
 ::: {.fragment .fade-in fragment-index=4}
@@ -138,30 +138,70 @@ $$
   
   ::: {.fragment fragment-index=2}
   - For every fixed $\mathbf{x} \in \mathcal{X}$, the function $L_{\mathbf{x}}(\cdot) = K(\cdot, \mathbf{x})$ is in $\mathcal{H}$.
-  :::
-  
-  ::: {.fragment fragment-index=2}
   - [Reproducing Property]{style="color:#ff9900"}: For all $f \in \mathcal{H}$ and $\mathbf{x} \in \mathcal{X}$, $\langle{f, L_{\mathbf{x}}}\rangle_{\mathcal{H}} = f(\mathbf{x})$.
   :::
   
-:::: {.fragment fragment-index=3}
-- For Bayesian Functional Optimization, we assume that $\tilde{f}$ is in some RKHS $\mathcal{H}_{K}$ with corresponding kernel $K$.
-::::
 :::
 
-<!-- ## Applications -->
+## Objectives
 
-<!-- ## Simulations -->
+::: {.incremental}
+- We have an unknown [black-box]{style="color:#ff9900"} real-valued functional $\tilde{f}$ defined on an RKHS $\mathcal{H}_{K}$ with the corresponding kernel function $K(\cdot, \cdot)$.
+- At step $n = 1, 2, \dots$, we select a function $h_{n} \in \mathcal{H}_{K}$ and we get a *noisy* observation $y_{n} = \tilde{f}(h_{n}) + \epsilon_{n}$.
+- Goal: **Find the [global maximum]{style="color:#ff9900"}** $h^{*} = \textrm{argmax}_{h \in \mathcal{H}_{K}}\tilde{f}(h)$.
+:::
 
-<!-- For our example simulations, we define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$: -->
-<!-- $$ -->
-<!-- \tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big) -->
-<!-- $$ -->
+## Optimization Algorithms
+
+::::: panel-tabset
+
+### `RKHS-REMBO`
+
+A naive algorithm for solving this optimization problem is the [`RKHS-REMBO`]{style="color:#ff9900"} algorithm:
+
+1. Generate a bounded linear operator $T: \mathbb{R}^{d} \longrightarrow \mathcal{H}_{K}$.
+2. Select a bounded region $\mathcal{X} \subset \mathbb{R}^{d}$.
+3. At each step, select $x_{n+1} \in \mathcal{X}$ which maximizes a chosen acquisition function.
+4. Denote $h_{n+1} = Tx_{n+1}$, and observe $y_{t+1} = \tilde{f}(h_{n+1}) + \epsilon_{n+1}$.
+5. Update the dataset and tune hyperparameters as needed.
+    
+### `BFO`
+
+Instead of `RKHS-REMBO`, the authors suggest the following [Bayesian Functional Optimization]{style="color:#ff9900"} algorithm, which is based on Gaussian process regression:
+
+1. Generate a prior mean function $\mu(\cdot) \in \mathcal{H}_{K}$.
+2. At each step, select $h_{n+1} \in \mathcal{H}_{K}$ which maximizes a chosen acquisition functional. 
+3. Sparsify $h_{n+1}$ to a compact function $\hat{h}_{n+1}$.
+4. Observe $y_{t+1} = \tilde{f}(\hat{h}_{n+1}) + \epsilon_{n+1}$.
+5. Update the dataset and tune hyperparameters as needed.
+
+:::::
+
+## Benefits of `BFO`
+
+:::: {.r-stack}
+::: {.fragment .fade-out fragment-index=2}
+::: {.fragment .fade-in fragment-index=1}
+- The output of `RKHS-REMBO` is limited to a $d$-dimensional projection of the desired function $h^{*}$, as new data is sampled based on an acquisition function on $\mathbb{R}^d$.
+- `BFO` does not have this restriction, as the acquisition functional to select new inputs is applied on $\mathcal{H}_{K}$ directly.
+:::
+:::
+::: {.fragment .fade-in fragment-index=2}
+- There are three common acquisition functionals for selecting $h_{n+1} \in \mathcal{H}_{K}$ based on the existing data.
+  * Probability of Improvement: $u_{\textrm{PI}}(h) = \mathbb{P}(\tilde{f}(h) > y_{\textrm{best}})$.
+  * Expected Improvement: $u_{\textrm{EI}}(h) = \mathbb{E}(\max\{\tilde{f}(h), y_{\textrm{best}}\} - y_{\textrm{best}})$.
+  * Gaussian Process Upper Confidence Bound (GP-UCB): $u_{\textrm{UCB}}(h) = \mu_{t}(h) + \beta_{t}^{1/2}\sigma_{t}(h)$.
+:::
+::::
+
+::: {.fragment .fade-in fragment-index=3}
+- If the kernel $K(\cdot, \cdot)$ associated with $\mathcal{H}_{K}$ is Fréchet differentiable, then the gradients of these acquistion functionals can be computed analytically.
+:::
 
 ## Works Cited
 
-- https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf
-- https://bookdown.org/rbg/surrogates/chap5.html
 - https://bayesoptbook.com/book/bayesoptbook_letter.pdf
+- https://bookdown.org/rbg/surrogates/chap5.html
+- https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf
 - https://gaussianprocess.org/gpml/chapters/RW.pdf
 - https://krasserm.github.io/2018/03/19/gaussian-processes/

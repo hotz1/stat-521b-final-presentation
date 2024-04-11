@@ -355,7 +355,7 @@ Joey Hotz
 <h2>Objectives</h2>
 <div class="fragment" data-fragment-index="1">
 <ul>
-<li>We have an unknown <span style="color:#ff9900">black-box</span> real-valued function <span class="math inline">\(\tilde{f}\)</span> defined on a closed and bounded subset <span class="math inline">\(\mathcal{X} \subseteq \mathbb{R}^{d}\)</span>.</li>
+<li>We have an unknown <span style="color:#ff9900">black-box</span> real-valued function <span class="math inline">\(\tilde{f}\)</span> defined on a bounded set <span class="math inline">\(\mathcal{X} \subset \mathbb{R}^{d}\)</span>.</li>
 </ul>
 </div>
 <div class="fragment" data-fragment-index="2">
@@ -385,8 +385,8 @@ Joey Hotz
 </ul>
 </div>
 </section>
-<section id="gaussian-process-example" class="slide level2">
-<h2>Gaussian Process Example</h2>
+<section id="gaussian-processes-1" class="slide level2">
+<h2>Gaussian Processes</h2>
 <div class="fragment" data-fragment-index="1">
 <p>To demonstrate a GP, we will define the following “unknown” smooth function <span class="math inline">\(\tilde{f}(x)\)</span> on the interval <span class="math inline">\([0,10]\)</span>: <span class="math display">\[
 \tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
@@ -400,8 +400,8 @@ Joey Hotz
 </div>
 </div>
 </section>
-<section id="gaussian-process-example-1" class="slide level2">
-<h2>Gaussian Process Example</h2>
+<section id="gaussian-processes-2" class="slide level2">
+<h2>Gaussian Processes</h2>
 <div class="r-stack">
 <div class="fragment fade-in" data-fragment-index="1">
 <div class="fragment fade-out" data-fragment-index="2">
@@ -468,11 +468,11 @@ Joey Hotz
 </div>
 <div class="fragment fade-in" data-fragment-index="2">
 <ul>
-<li>There are three common decision rules for selecting <span class="math inline">\(x_{n+1}\)</span>:
+<li>There are three common decision rules for selecting <span class="math inline">\(x_{n+1}\)</span> based on the currently-sampled data:
 <ul>
-<li>Probability of Improvement</li>
-<li>Expected Improvement</li>
-<li>Gaussian Process Upper Confidence Bound (GP-UCB)</li>
+<li>Probability of Improvement: <span class="math inline">\(u_{\textrm{PI}}(x) = \mathbb{P}(\tilde{f}(x) &gt; y_{\textrm{best}})\)</span>.</li>
+<li>Expected Improvement: <span class="math inline">\(u_{\textrm{EI}}(x) = \mathbb{E}(\max\{\tilde{f}(x), y_{\textrm{best}}\} - y_{\textrm{best}})\)</span>.</li>
+<li>Gaussian Process Upper Confidence Bound (GP-UCB): <span class="math inline">\(u_{\textrm{UCB}}(x) = \mu_{t}(x) + \beta_{t}^{1/2}\sigma_{t}(x)\)</span>.</li>
 </ul></li>
 </ul>
 </div>
@@ -498,33 +498,84 @@ Joey Hotz
 <div class="fragment" data-fragment-index="2">
 <ul>
 <li>For every fixed <span class="math inline">\(\mathbf{x} \in \mathcal{X}\)</span>, the function <span class="math inline">\(L_{\mathbf{x}}(\cdot) = K(\cdot, \mathbf{x})\)</span> is in <span class="math inline">\(\mathcal{H}\)</span>.</li>
-</ul>
-</div>
-<div class="fragment" data-fragment-index="2">
-<ul>
 <li><span style="color:#ff9900">Reproducing Property</span>: For all <span class="math inline">\(f \in \mathcal{H}\)</span> and <span class="math inline">\(\mathbf{x} \in \mathcal{X}\)</span>, <span class="math inline">\(\langle{f, L_{\mathbf{x}}}\rangle_{\mathcal{H}} = f(\mathbf{x})\)</span>.</li>
 </ul>
 </div></li>
 </ul>
-<div class="fragment" data-fragment-index="3">
+</div>
+</section>
+<section id="objectives-1" class="slide level2">
+<h2>Objectives</h2>
+<div>
 <ul>
-<li>For Bayesian Functional Optimization, we assume that <span class="math inline">\(\tilde{f}\)</span> is in some RKHS <span class="math inline">\(\mathcal{H}_{K}\)</span> with corresponding kernel <span class="math inline">\(K\)</span>.</li>
+<li class="fragment">We have an unknown <span style="color:#ff9900">black-box</span> real-valued functional <span class="math inline">\(\tilde{f}\)</span> defined on an RKHS <span class="math inline">\(\mathcal{H}_{K}\)</span> with the corresponding kernel function <span class="math inline">\(K(\cdot, \cdot)\)</span>.</li>
+<li class="fragment">At step <span class="math inline">\(n = 1, 2, \dots\)</span>, we select a function <span class="math inline">\(h_{n} \in \mathcal{H}_{K}\)</span> and we get a <em>noisy</em> observation <span class="math inline">\(y_{n} = \tilde{f}(h_{n}) + \epsilon_{n}\)</span>.</li>
+<li class="fragment">Goal: <strong>Find the <span style="color:#ff9900">global maximum</span></strong> <span class="math inline">\(h^{*} = \textrm{argmax}_{h \in \mathcal{H}_{K}}\tilde{f}(h)\)</span>.</li>
+</ul>
+</div>
+</section>
+<section id="optimization-algorithms" class="slide level2">
+<h2>Optimization Algorithms</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1"><code>RKHS-REMBO</code></a></li><li><a href="#tabset-1-2"><code>BFO</code></a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<p>A naive algorithm for solving this optimization problem is the <span style="color:#ff9900"><code>RKHS-REMBO</code></span> algorithm:</p>
+<ol type="1">
+<li>Generate a bounded linear operator <span class="math inline">\(T: \mathbb{R}^{d} \longrightarrow \mathcal{H}_{K}\)</span>.</li>
+<li>Select a bounded region <span class="math inline">\(\mathcal{X} \subset \mathbb{R}^{d}\)</span>.</li>
+<li>At each step, select <span class="math inline">\(x_{n+1} \in \mathcal{X}\)</span> which maximizes a chosen acquisition function.</li>
+<li>Denote <span class="math inline">\(h_{n+1} = Tx_{n+1}\)</span>, and observe <span class="math inline">\(y_{t+1} = \tilde{f}(h_{n+1}) + \epsilon_{n+1}\)</span>.</li>
+<li>Update the dataset and tune hyperparameters as needed.</li>
+</ol>
+</div>
+<div id="tabset-1-2">
+<p>Instead of <code>RKHS-REMBO</code>, the authors suggest the following <span style="color:#ff9900">Bayesian Functional Optimization</span> algorithm, which is based on Gaussian process regression:</p>
+<ol type="1">
+<li>Generate a prior mean function <span class="math inline">\(\mu(\cdot) \in \mathcal{H}_{K}\)</span>.</li>
+<li>At each step, select <span class="math inline">\(h_{n+1} \in \mathcal{H}_{K}\)</span> which maximizes a chosen acquisition functional.</li>
+<li>Sparsify <span class="math inline">\(h_{n+1}\)</span> to a compact function <span class="math inline">\(\hat{h}_{n+1}\)</span>.</li>
+<li>Observe <span class="math inline">\(y_{t+1} = \tilde{f}(\hat{h}_{n+1}) + \epsilon_{n+1}\)</span>.</li>
+<li>Update the dataset and tune hyperparameters as needed.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="benefits-of-bfo" class="slide level2">
+<h2>Benefits of <code>BFO</code></h2>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="2">
+<div class="fragment fade-in" data-fragment-index="1">
+<ul>
+<li>The output of <code>RKHS-REMBO</code> is limited to a <span class="math inline">\(d\)</span>-dimensional projection of the desired function <span class="math inline">\(h^{*}\)</span>, as new data is sampled based on an acquisition function on <span class="math inline">\(\mathbb{R}^d\)</span>.</li>
+<li><code>BFO</code> does not have this restriction, as the acquisition functional to select new inputs is applied on <span class="math inline">\(\mathcal{H}_{K}\)</span> directly.</li>
 </ul>
 </div>
 </div>
-<!-- ## Applications -->
-<!-- ## Simulations -->
-<!-- For our example simulations, we define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$: -->
-<!-- $$ -->
-<!-- \tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big) -->
-<!-- $$ -->
+<div class="fragment fade-in" data-fragment-index="2">
+<ul>
+<li>There are three common acquisition functionals for selecting <span class="math inline">\(h_{n+1} \in \mathcal{H}_{K}\)</span> based on the existing data.
+<ul>
+<li>Probability of Improvement: <span class="math inline">\(u_{\textrm{PI}}(h) = \mathbb{P}(\tilde{f}(h) &gt; y_{\textrm{best}})\)</span>.</li>
+<li>Expected Improvement: <span class="math inline">\(u_{\textrm{EI}}(h) = \mathbb{E}(\max\{\tilde{f}(h), y_{\textrm{best}}\} - y_{\textrm{best}})\)</span>.</li>
+<li>Gaussian Process Upper Confidence Bound (GP-UCB): <span class="math inline">\(u_{\textrm{UCB}}(h) = \mu_{t}(h) + \beta_{t}^{1/2}\sigma_{t}(h)\)</span>.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<ul>
+<li>If the kernel <span class="math inline">\(K(\cdot, \cdot)\)</span> associated with <span class="math inline">\(\mathcal{H}_{K}\)</span> is Fréchet differentiable, then the gradients of these acquistion functionals can be computed analytically.</li>
+</ul>
+</div>
 </section>
 <section id="works-cited" class="slide level2">
 <h2>Works Cited</h2>
 <ul>
-<li>https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf</li>
-<li>https://bookdown.org/rbg/surrogates/chap5.html</li>
 <li>https://bayesoptbook.com/book/bayesoptbook_letter.pdf</li>
+<li>https://bookdown.org/rbg/surrogates/chap5.html</li>
+<li>https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf</li>
 <li>https://gaussianprocess.org/gpml/chapters/RW.pdf</li>
 <li>https://krasserm.github.io/2018/03/19/gaussian-processes/</li>
 </ul>
