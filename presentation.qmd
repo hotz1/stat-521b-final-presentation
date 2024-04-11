@@ -50,7 +50,7 @@ library(tidyverse)
   * There is some cost associated with evaluating $\tilde{f}$ to acquire new data.
 ::::
 ::: {.fragment fragment-index=3}
-- Goal: **Find the [global maximum]{style="color:#ff9900"}** $x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)$ **and maintain a low overall evaluation cost.**
+- Goal: **Find the [global maximum]{style="color:#ff9900"}** $x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)$.
 :::
 
 ## Reproducing Kernel Hilbert Spaces
