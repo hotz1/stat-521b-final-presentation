@@ -326,7 +326,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Bayesian Functional Optimization</h1>
-  <p class="subtitle">Subtitle</p>
+  <p class="subtitle">STAT 521B Paper Presentation</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -336,22 +336,94 @@ Joey Hotz
 </div>
 </div>
 
-  <p class="date">Last Updated: 09 April 2024</p>
+  <p class="date">Last Updated: 10 April 2024</p>
 </section>
 <section id="table-of-contents" class="slide level2">
 <h2>Table of Contents</h2>
-<!-- ## Works Cited{style="font-size: 75%;"} -->
-<!-- - Council 31, AFSCME v. Ward, 771 F. Supp. 247 (N.D. Ill. 1991). <https://law.justia.com/cases/federal/district-courts/FSupp/771/247/1656615/> -->
-<!-- - Department of Justice Canada. (2021, September 1). *Civil and criminal cases*. Department of Justice. <https://www.justice.gc.ca/eng/csj-sjc/just/08.html>  -->
-<!-- - EEOC v. Shelby County Government, 707 F. Supp. 969 (W.D. Tenn. 1988). <https://law.justia.com/cases/federal/district-courts/FSupp/707/969/1574457/> -->
-<!-- - Gastwirth, J. L., & Greenhouse, S. W. (1995). Biostatistical concepts and methods in the legal setting. *Statistics in Medicine, 14*(15), 1641–1653. <https://doi.org/10.1002/sim.4780141505> -->
-<!-- - Graubard, B. I., Sowmya Rao, R., & Gastwirth, J. L. (2005). Using the Peters-Belson method to measure health care disparities from complex survey data. *Statistics in Medicine, 24*(17), 2659–2668. <https://doi.org/10.1002/sim.2135> -->
-<!-- - Gray, Ritter & Graham, P.C. . (2013, June 18). *Criminal vs. Civil Court Cases*. The Judicial Learning Center. <https://judiciallearningcenter.org/types-of-court-cases/> -->
-<!-- - Rosenthal, J. S. (2015). Probability, Justice, and the Risk of Wrongful Conviction. *The Mathematics Enthusiast, 12*(1–3), 11–18. <https://doi.org/10.54870/1551-3440.1330> -->
+<ul>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+</section>
+<section>
+<section id="problem-background" class="title-slide slide level1 center" data-background-color="#005500">
+<h1><span style="color:#fafafa;">Problem Background</span></h1>
+
+</section>
+<section id="objective" class="slide level2">
+<h2>Objective</h2>
+<h3 id="problem-background-1">Problem Background</h3>
+<div class="fragment" data-fragment-index="1">
+<ul>
+<li>Suppose we have some unknown <span style="color:#ff9900">black-box</span> real-valued function <span class="math inline">\(\tilde{f}\)</span> defined on a closed and bounded subset <span class="math inline">\(\mathcal{X} \subseteq \mathbb{R}^{d}\)</span>.</li>
+</ul>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li>At step <span class="math inline">\(n = 1, 2, \dots\)</span>, we select a value <span class="math inline">\(x_{n} \in \mathcal{X}\)</span> and we get a <em>noisy</em> observation <span class="math inline">\(y_{n} = \tilde{f}(x_{n}) + \epsilon_{n}\)</span>.
+<ul>
+<li>There is some cost associated with evaluating <span class="math inline">\(\tilde{f}\)</span> to acquire new data.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment" data-fragment-index="3">
+<ul>
+<li>Goal: <strong>Find the <span style="color:#ff9900">global maximum</span></strong> <span class="math inline">\(x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)\)</span> <strong>and maintain a low overall evaluation cost.</strong></li>
+</ul>
+</div>
+</section>
+<section id="reproducing-kernel-hilbert-spaces" class="slide level2">
+<h2>Reproducing Kernel Hilbert Spaces</h2>
+<div class="fragment" data-fragment-index="1">
+<ul>
+<li><p>A Hilbert space <span class="math inline">\(\mathcal{H}\)</span> of functions <span class="math inline">\(\mathcal{X} \longrightarrow \mathbb{R}\)</span> with inner product <span class="math inline">\(\langle\cdot,\cdot\rangle_{\mathcal{H}}\)</span> is an <span style="color:#ff9900">RKHS</span> with <em>kernel</em> <span class="math inline">\(K: \mathcal{X} \times \mathcal{X} \longrightarrow \mathbb{R}\)</span> if it satisfies the following:</p>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li>For every fixed <span class="math inline">\(\mathbf{x} \in \mathcal{X}\)</span>, the function <span class="math inline">\(L_{\mathbf{x}}(\cdot) = K(\cdot, \mathbf{x})\)</span> is in <span class="math inline">\(\mathcal{H}\)</span>.</li>
+</ul>
+</div>
+<div class="fragment" data-fragment-index="2">
+<ul>
+<li><span style="color:#ff9900">Reproducing Property</span>: For all <span class="math inline">\(f \in \mathcal{H}\)</span> and <span class="math inline">\(\mathbf{x} \in \mathcal{X}\)</span>, <span class="math inline">\(\langle{f, L_{\mathbf{x}}}\rangle_{\mathcal{H}} = f(\mathbf{x})\)</span>.</li>
+</ul>
+</div></li>
+</ul>
+<div class="fragment" data-fragment-index="3">
+<ul>
+<li>For Bayesian Functional Optimization, we assume that <span class="math inline">\(\tilde{f}\)</span> is in some RKHS <span class="math inline">\(\mathcal{H}_{K}\)</span> with corresponding kernel <span class="math inline">\(K\)</span>.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="gaussian-processes" class="slide level2">
+<h2>Gaussian Processes</h2>
+<div>
+<p>-f</p>
+</div>
+</section>
+<section id="applications" class="slide level2">
+<h2>Applications</h2>
+</section>
+<section id="simulations" class="slide level2">
+<h2>Simulations</h2>
+<p>For our example simulations, we define the following “unknown” smooth function <span class="math inline">\(\tilde{f}(x)\)</span> on the interval <span class="math inline">\([0,10]\)</span>: <span class="math display">\[
+\tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
+\]</span></p>
+</section>
+<section id="works-cited" class="slide level2">
+<h2>Works Cited</h2>
+<ul>
+<li>https://cdn.aaai.org/ojs/11830/11830-13-15358-1-2-20201228.pdf</li>
+<li>https://bookdown.org/rbg/surrogates/chap5.html</li>
+<li>https://bayesoptbook.com/book/bayesoptbook_letter.pdf</li>
+<li>https://gaussianprocess.org/gpml/chapters/RW.pdf</li>
+<li>https://krasserm.github.io/2018/03/19/gaussian-processes/</li>
+</ul>
 <div class="footer footer-default">
 
 </div>
-</section>
+</section></section>
     </div>
   </div>
 
@@ -404,7 +476,7 @@ Joey Hotz
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: 'c/t',
+        slideNumber: false,
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
@@ -747,6 +819,11 @@ Joey Hotz
       }
     });
     </script>
+    <style>
+    .reveal .slide ul {
+    margin-bottom: 0;
+    }
+    </style>
     
 
 </body></html>
