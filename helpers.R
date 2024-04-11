@@ -109,7 +109,8 @@ for(n in c(1, 2, 5, 10, 20)){
     select(x_obs, y_obs = y_obs_low)
   
   plot_GP_regression(update_GP_estimates(GP_estimates, temp_low, 0.025), temp_low) %>%
-    ggsave(filename = here(paste0("images/GP_observed_", n, "low_noise.jpg")))
+    ggsave(filename = here(paste0("images/GP", n, "_noise_low.jpg")),
+           width = 6, height = 4, units = "in")
   
   # Low noise
   temp_high <- GP_observed %>% 
@@ -117,5 +118,37 @@ for(n in c(1, 2, 5, 10, 20)){
     select(x_obs, y_obs = y_obs_high)
   
   plot_GP_regression(update_GP_estimates(GP_estimates, temp_high, 0.25), temp_high) %>%
-    ggsave(filename = here(paste0("images/GP_observed_", n, "high_noise.jpg")))
+    ggsave(filename = here(paste0("images/GP", n, "_noise_high.jpg")),
+           width = 6, height = 4, units = "in")
 }
+
+# Compute the three acquisition functions for the data
+GP_updated_high20 <- update_GP_estimates(GP_estimates, temp_high, 0.25)
+y_best <- max(temp_high$y_obs)
+GP_updated_high20 <- GP_updated_high20 %>%
+  mutate(gamma = (mean - y_best)/se, 
+         prob_imp = pnorm(gamma),
+         expec_imp = se * (gamma * pnorm(gamma) + dnorm(gamma)),
+         GPUCB = mean + se * (2*log(1^(1/2 + 2) * pi^2 * 3/0.05))^(1/2))
+
+(acquisition_plots <- GP_updated_high20 %>% 
+  pivot_longer(cols = c(prob_imp, expec_imp, GPUCB),
+               names_to = "Func", values_to = "Acquisition") %>%
+  mutate(Func = factor(Func, levels = c("prob_imp", "expec_imp", "GPUCB"),
+                       labels = c("Probability of Improvement", 
+                                  "Expected Improvement", "GP-UCB"))) %>%
+  ggplot() +
+  geom_line(aes(x = x, y = Acquisition, color = Func), linewidth = 0.75) +
+  facet_wrap(~Func, nrow = 3, scales = "free_y") +
+  labs(y = "Acquisition Function", title = "Values of the three primary GP acquisition functions") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 2)) +   
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.background = element_rect(fill = "#fafafa"),
+        strip.background = element_rect(fill = "#FFDF0040"),
+        legend.position = "none"))
+# 
+# ggsave(here("images/acquisition_plots.jpg"), acquisition_plots,
+#        width = 6, height = 4, units = "in")
+        

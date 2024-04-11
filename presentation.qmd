@@ -33,17 +33,16 @@ library(tidyverse)
 
 ## Table of Contents
 
-- 
+- Bayesian Optimization
 - 
 - 
 
-# [Problem Background]{style="color:#fafafa;"} {background-color=#005500}
+# [Standard Bayesian Optimization]{style="color:#fafafa;"} {background-color=#005500}
 
-## Objective
-### Problem Background
+## Objectives
 
 ::: {.fragment fragment-index=1}
-- Suppose we have some unknown [black-box]{style="color:#ff9900"} real-valued function $\tilde{f}$ defined on a closed and bounded subset $\mathcal{X} \subseteq \mathbb{R}^{d}$.
+- We have an unknown [black-box]{style="color:#ff9900"} real-valued function $\tilde{f}$ defined on a closed and bounded subset $\mathcal{X} \subseteq \mathbb{R}^{d}$.
 :::
 :::: {.fragment fragment-index=2}
 - At step $n = 1, 2, \dots$, we select a value $x_{n} \in \mathcal{X}$ and we get a *noisy* observation $y_{n} = \tilde{f}(x_{n}) + \epsilon_{n}$.
@@ -52,6 +51,15 @@ library(tidyverse)
 ::: {.fragment fragment-index=3}
 - Goal: **Find the [global maximum]{style="color:#ff9900"}** $x^{*} = \textrm{argmax}_{x \in \mathcal{X}}\tilde{f}(x)$.
 :::
+
+## Gaussian Processes
+
+::: {.incremental}
+- A common model for Bayesian optimization is to perform regression using [Gaussian processes]{style="color:#ff9900"}.
+- A Gaussian process (GP) is a 
+:::
+
+# [Bayesian Functional Optimization]{style="color:#fafafa;"} {background-color=#005500}
 
 ## Reproducing Kernel Hilbert Spaces
 
@@ -71,20 +79,14 @@ library(tidyverse)
 ::::
 :::
 
-## Gaussian Processes
+<!-- ## Applications -->
 
-::: {.incremental}
--f 
-:::
+<!-- ## Simulations -->
 
-## Applications
-
-## Simulations
-
-For our example simulations, we define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$:
-$$
-\tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big)
-$$
+<!-- For our example simulations, we define the following "unknown" smooth function $\tilde{f}(x)$ on the interval $[0,10]$: -->
+<!-- $$ -->
+<!-- \tilde{f}(x) = \frac{1}{8}\sin^{2}(\pi{x})\sqrt{x+4}-\sin\Big(\frac{\pi{x}}{2}\Big)\cos\Big(\frac{\pi{x^2}}{7}\Big) -->
+<!-- $$ -->
 
 ## Works Cited
 
